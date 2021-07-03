@@ -2,7 +2,10 @@ package com.example.android.miwok;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -10,6 +13,7 @@ import java.util.ArrayList;
 
 public class FamilyMembers extends AppCompatActivity {
 
+    private MediaPlayer mediaPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +50,23 @@ public class FamilyMembers extends AppCompatActivity {
         //GridView simplegrid; = (GridView)findViewById(R.id.list);
         listView.setAdapter(itemsAdapter);
         //simplegrid.setAdapter(itemsAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Get the {@link Word} object at the given position the user clicked on
+                Word word = words.get(position);
+
+                // Create and setup the {@link MediaPlayer} for the audio resource associated
+                // with the current word
+                mediaPlayer = MediaPlayer.create(FamilyMembers.this, word.getmPronunciationFileId());
+
+                // Start the audio file
+                mediaPlayer.start();
+
+            }
+        });
+
 
     }
 }

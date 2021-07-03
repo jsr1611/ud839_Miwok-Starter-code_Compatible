@@ -22,9 +22,6 @@ import java.util.List;
 
 public class WordAdapter extends ArrayAdapter<Word> {
 
-    private Button playBtn;
-    private MediaPlayer mediaPlayer;
-
     private int mColorResourceId;
 
     public WordAdapter(Activity context, ArrayList<Word> words, int colorResourceId) {
@@ -52,15 +49,6 @@ public class WordAdapter extends ArrayAdapter<Word> {
 
         mMiwokTranslation.setText(words.getmMiworkTranslation());
 
-        playBtn = listItemView.findViewById(R.id.playBtn);
-        mediaPlayer = MediaPlayer.create(getContext(), words.getmPronunciationFileId());
-
-        playBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mediaPlayer.start();
-            }
-        });
 
 
         ImageView mImageIcon = (ImageView) listItemView.findViewById(R.id.list_image);
@@ -73,8 +61,6 @@ public class WordAdapter extends ArrayAdapter<Word> {
         View textContainer = listItemView.findViewById(R.id.text_container);
         int color = ContextCompat.getColor(getContext(), mColorResourceId);
         textContainer.setBackgroundColor(color);
-
-        playBtn.setBackgroundColor(color);
 
 
         return listItemView;

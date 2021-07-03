@@ -45,17 +45,6 @@ public class Word {
         return mImageResourceId != NO_IMAGE_PROVIDED;
     }
 
-    /**
-     * Create a new Word object
-     *
-     * @param mDefaultTranslation is the word in a language that user is using(such as English)
-     * @param mMiworkTranslation  is the word in the Miwok language
-     */
-    public Word(String mDefaultTranslation, String mMiworkTranslation) {
-        this.mDefaultTranslation = mDefaultTranslation;
-        this.mMiworkTranslation = mMiworkTranslation;
-    }
-
 
     /**
      * Create a new Word object

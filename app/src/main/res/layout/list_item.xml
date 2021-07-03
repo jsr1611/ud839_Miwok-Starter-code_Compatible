@@ -45,11 +45,4 @@
             android:textColor="@android:color/white"
             tools:text="one" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/playBtn"
-        android:layout_width="30dp"
-        android:layout_height="@dimen/list_item_height"
-        android:layout_gravity="center_vertical"
-        android:text=" > " />
 </LinearLayout>
