@@ -2,6 +2,8 @@ package com.example.android.miwok;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
@@ -9,9 +11,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class NumbersActivity extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
+    private AudioManager mAudioManager;
+    AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener;
+
     private MediaPlayer.OnCompletionListener mOnCompletionListener = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
@@ -24,9 +30,26 @@ public class NumbersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.word_list);
 
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mOnAudioFocusChangeListener =
+                new AudioManager.OnAudioFocusChangeListener() {
+                    public void onAudioFocusChange(int focusChange) {
+                        if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                            // Pause playback and get ready to be played from start
+                            mediaPlayer.pause();
+                            mediaPlayer.seekTo(0);
+                        } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                            // resume play
+                            mediaPlayer.start();
+                        } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                            releaseMediaPlayer();
+
+                        }
+                    }
+                };
 
         // Create a list of words
-        ArrayList<Word> words = new ArrayList<Word>();
+        final ArrayList<Word> words = new ArrayList<Word>();
 
         words.add(new Word("one", "lutti", R.drawable.number_one, R.raw.number_one));
         words.add(new Word("two", "otiiko", R.drawable.number_two, R.raw.number_two));
@@ -63,15 +86,28 @@ public class NumbersActivity extends AppCompatActivity {
                 // Release any mediaplayer resources that were used before
                 releaseMediaPlayer();
 
+                // Request audio focus for playback
+                int result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener,
+                        // Use the music stream.
+                        AudioManager.STREAM_MUSIC,
+                        // Request permanent focus.
+                        AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 
-                // Create and setup the {@link MediaPlayer} for the audio resource associated
-                // with the current word
-                mediaPlayer = MediaPlayer.create(NumbersActivity.this, word.getmPronunciationFileId());
+                if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    //mAudioManager.registerMediaButtonEventReceiver(RemoteControlReceiver);
+                    // We have an audio focus now.
 
-                // Start the audio file
-                mediaPlayer.start();
+                    // Create and setup the {@link MediaPlayer} for the audio resource associated
+                    // with the current word
+                    mediaPlayer = MediaPlayer.create(NumbersActivity.this, word.getmPronunciationFileId());
 
-                mediaPlayer.setOnCompletionListener(mOnCompletionListener);
+                    // Start the audio file
+                    mediaPlayer.start();
+
+                    mediaPlayer.setOnCompletionListener(mOnCompletionListener);
+                }
+
+
             }
         });
 
@@ -99,6 +135,8 @@ public class NumbersActivity extends AppCompatActivity {
             // setting the media player to null is an easy way to tell that the media player
             // is not configured to play an audio file at the moment.
             mediaPlayer = null;
+
+            mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
         }
     }
 
