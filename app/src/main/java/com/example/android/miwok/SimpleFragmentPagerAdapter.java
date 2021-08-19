@@ -1,14 +1,18 @@
 package com.example.android.miwok;
 
+import android.content.Context;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
-    public SimpleFragmentPagerAdapter(FragmentManager fm) {
-
+    private Context mContext;
+    public SimpleFragmentPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
+        mContext = context;
+
     }
 
     @Override
@@ -35,17 +39,21 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position){
             case 0:
-                return "Numbers";
+                return mContext.getString(R.string.category_numbers); // "Numbers";
             case 2:
-                return "Colors";
+                return mContext.getString(R.string.category_colors); //"Colors";
             case 1:
-                return "Family";
+                return mContext.getString(R.string.category_family); //"Family";
             case 3:
-                return "Phrases";
+                return mContext.getString(R.string.category_phrases); //"Phrases";
             default:
                 return null;
         }
 
         //return super.getPageTitle(position);
     }
+
+
+
+
 }
